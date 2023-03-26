@@ -449,14 +449,16 @@ final class MapGestureDetector {
       //  different bezier parameters (later, and not here)
       //  maybe tilt 0 should result in tiltFactor 1.0?
       //   or adjust animationTime so that tiltFactor (and screen density) do not affect offsetXY/animationTime?
-      //   long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor * 1.84);
+      //    long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor * 1.84);
+      //    -> there is definitely acceleration after releasing move
+      //   try same but with another factor 1.5 (just guessing)
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
       cameraChangeDispatcher.onCameraMoveStarted(REASON_API_GESTURE);
 
       // update transformation
-      transform.moveBy(offsetX, offsetY, (long) (animationTime * 1.84));
+      transform.moveBy(offsetX, offsetY, (long) (animationTime * 1.84 * 1.5));
 
       return true;
     }
