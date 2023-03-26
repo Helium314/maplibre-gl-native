@@ -419,7 +419,7 @@ final class MapGestureDetector {
 
       // calculate velocity vector for xy dimensions, independent from screen size
       double velocityXY = Math.hypot(velocityX / screenDensity, velocityY / screenDensity);
-      if (velocityXY < MapboxConstants.VELOCITY_THRESHOLD_IGNORE_FLING) {
+      if (velocityXY < MapboxConstants.VELOCITY_THRESHOLD_IGNORE_FLING / 10) {
         // ignore short flings, these can occur when other gestures just have finished executing
         return false;
       }
@@ -431,7 +431,7 @@ final class MapGestureDetector {
       double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
-      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE);
+      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3);
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
         double angle = Math.abs(Math.toDegrees(Math.atan(offsetX / offsetY)));
@@ -440,6 +440,12 @@ final class MapGestureDetector {
         }
         offsetX = 0.0;
       }
+      // changes:
+      //  threshold / 10 (done)
+      //  base time * 3 (done)
+      //  factor 1.84 -> try for animation time first
+      //  different bezier parameters (later, and not here)
+      //  maybe tilt 0 should result in tiltFactor 1.0? or adjust so that tiltFactor (and screen density) do not affect offsetXY/animationTime?
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
