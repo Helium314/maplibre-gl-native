@@ -427,12 +427,18 @@ final class MapGestureDetector {
       // tilt results in a bigger translation, limiting input for #5281
       double tilt = transform.getTilt();
       double tiltFactor = 1.5 + ((tilt != 0) ? (tilt / 10) : 0);
-      double offsetX = velocityX / tiltFactor / screenDensity;
-      double offsetY = velocityY / tiltFactor / screenDensity;
+//      double offsetX = velocityX / tiltFactor / screenDensity;
+//      double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
       long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor);
 //      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3);
+      
+      // nah, try offset based on animation time and velocity (and that factor)
+      // screenDensity and tilt come only via animationTime
+      double offsetX = velocityX * animationTime * 4;
+      double offsetY = velocityY * animationTime * 4;
+      
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
         double angle = Math.abs(Math.toDegrees(Math.atan(offsetX / offsetY)));
@@ -457,14 +463,16 @@ final class MapGestureDetector {
       //   -> looks quite nice, but animation much too long
       //   use lower (new) base (1500 instead of 3500), this also should show whether my idea makes sense at all (i think not...)
       //   -> does not work
-      //   now use half time, half distance
+      //   now use 3500 and half time, half distance
+      //   -> really but when flinging slowly, but not when flinging fast
+      //  and now try determining offset from velocity, factor and animation time (keep time as it is for now)
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
       cameraChangeDispatcher.onCameraMoveStarted(REASON_API_GESTURE);
 
       // update transformation
-      transform.moveBy(offsetX / 2, offsetY / 2, (long) (animationTime * 2));
+      transform.moveBy(offsetX, offsetY, animationTime);
 
       return true;
     }
