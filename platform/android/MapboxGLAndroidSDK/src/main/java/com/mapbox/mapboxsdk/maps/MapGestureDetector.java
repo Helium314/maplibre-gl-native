@@ -431,7 +431,7 @@ final class MapGestureDetector {
       double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
-      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3);
+      long animationTime = (long) ((velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3) * 1.84);
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
         double angle = Math.abs(Math.toDegrees(Math.atan(offsetX / offsetY)));
@@ -443,9 +443,11 @@ final class MapGestureDetector {
       // changes:
       //  threshold / 10 (done)
       //  base time * 3 (done)
-      //  factor 1.84 -> try for animation time first
+      //  factor 1.84 -> try for animation time first (done), maybe later for offset
       //  different bezier parameters (later, and not here)
-      //  maybe tilt 0 should result in tiltFactor 1.0? or adjust so that tiltFactor (and screen density) do not affect offsetXY/animationTime?
+      //  maybe tilt 0 should result in tiltFactor 1.0?
+      //   or adjust animationTime so that tiltFactor (and screen density) do not affect offsetXY/animationTime?
+      //   long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor * 1.84);
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
