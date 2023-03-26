@@ -436,8 +436,8 @@ final class MapGestureDetector {
       
       // nah, try offset based on animation time and velocity (and that factor)
       // screenDensity and tilt come only via animationTime
-      double offsetX = velocityX * animationTime * 4 / 1000;
-      double offsetY = velocityY * animationTime * 4 / 1000;
+      double offsetX = velocityX * animationTime * 4 / 1000 / 10; // 1000 becuase speed is in pixels/s, 10 because ??
+      double offsetY = velocityY * animationTime * 4 / 1000 / 10; // 1000 becuase speed is in pixels/s, 10 because ??
       
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
