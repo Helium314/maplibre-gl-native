@@ -452,13 +452,14 @@ final class MapGestureDetector {
       //    long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor * 1.84);
       //    -> there is definitely acceleration after releasing move
       //   try same but with another factor 1.5 (just guessing)
+      //    -> not enough (and now animation is rather long...), so also divide offset by 1.5...
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
       cameraChangeDispatcher.onCameraMoveStarted(REASON_API_GESTURE);
 
       // update transformation
-      transform.moveBy(offsetX, offsetY, (long) (animationTime * 1.84 * 1.5));
+      transform.moveBy(offsetX / 1.5, offsetY / 1.5, (long) (animationTime * 1.84 * 1.5));
 
       return true;
     }
