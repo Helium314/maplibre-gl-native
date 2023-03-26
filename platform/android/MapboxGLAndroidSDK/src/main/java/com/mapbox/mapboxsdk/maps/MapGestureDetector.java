@@ -459,7 +459,7 @@ final class MapGestureDetector {
       cameraChangeDispatcher.onCameraMoveStarted(REASON_API_GESTURE);
 
       // update transformation
-      transform.moveBy(offsetX / 1.5, offsetY / 1.5, (long) (animationTime * 1.84 * 1.5));
+      transform.moveBy(offsetX / 1.5, offsetY / 1.5, (long) (animationTime * 4 * 1.5));
 
       return true;
     }
