@@ -72,17 +72,6 @@ jobs:
 
       - name: Android nitpick
         run: make run-android-nitpick
-        
-      - name: Update version name
-        run: |
-          RELEASE_VERSION="$( git describe --tags --match=android-v*.*.* --abbrev=0 | sed 's/^android-v//' )"
-          echo "Latest version from tag: $RELEASE_VERSION"
-          if [ ! -z "$RELEASE_VERSION" ]; then
-            sed -i -e "s/^VERSION_NAME=.*/VERSION_NAME=${RELEASE_VERSION}/" MapboxGLAndroidSDK/gradle.properties
-            echo "MapboxGLAndroidSDK/gradle.properties:"
-            cat MapboxGLAndroidSDK/gradle.properties
-          fi
-        shell: bash
 
       - name: Build package
         run: make apackage
