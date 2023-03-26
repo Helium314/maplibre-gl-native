@@ -431,7 +431,8 @@ final class MapGestureDetector {
       double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
-      long animationTime = (long) ((velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3) * 1.84);
+      long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor);
+//      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3);
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
         double angle = Math.abs(Math.toDegrees(Math.atan(offsetX / offsetY)));
@@ -444,6 +445,7 @@ final class MapGestureDetector {
       //  threshold / 10 (done)
       //  base time * 3 (done)
       //  factor 1.84 -> try for animation time first (done), maybe later for offset
+      //   -> animation too slow (with base time *3), and still animation seems to accelerate after releasing finger
       //  different bezier parameters (later, and not here)
       //  maybe tilt 0 should result in tiltFactor 1.0?
       //   or adjust animationTime so that tiltFactor (and screen density) do not affect offsetXY/animationTime?
@@ -454,7 +456,7 @@ final class MapGestureDetector {
       cameraChangeDispatcher.onCameraMoveStarted(REASON_API_GESTURE);
 
       // update transformation
-      transform.moveBy(offsetX, offsetY, animationTime);
+      transform.moveBy(offsetX, offsetY, (long) (animationTime * 1.84));
 
       return true;
     }
