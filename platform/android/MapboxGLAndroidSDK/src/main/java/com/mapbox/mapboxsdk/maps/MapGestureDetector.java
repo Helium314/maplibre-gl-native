@@ -431,7 +431,7 @@ final class MapGestureDetector {
 //      double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
-      long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor);
+      long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor)*3;
 //      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3);
       
       // nah, try offset based on animation time and velocity (and that factor)
@@ -470,6 +470,7 @@ final class MapGestureDetector {
       //   yes, see https://github.com/mapbox/mapbox-gestures-android/blob/18846f37b0b1384a3560103a1103ad31846f7366/library/src/main/java/com/mapbox/android/gestures/ProgressiveGesture.java#L82
       //    velocityTracker.computeCurrentVelocity(1000) means per 1000 ms (android.view.VelocityTracker)
       //    just assume it's the same for maplibre, as the code is actually mapbox
+      //    needed another factor 10, but seems fine now
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
