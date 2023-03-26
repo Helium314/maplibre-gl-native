@@ -453,13 +453,14 @@ final class MapGestureDetector {
       //    -> there is definitely acceleration after releasing move
       //   try same but with another factor 1.5 (just guessing)
       //    -> not enough (and now animation is rather long...), so also divide offset by 1.5...
+      //  factor 4 with adjusted unitBezier is definietely too much... get rid of both 1.5 as a first try
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
       cameraChangeDispatcher.onCameraMoveStarted(REASON_API_GESTURE);
 
       // update transformation
-      transform.moveBy(offsetX / 1.5, offsetY / 1.5, (long) (animationTime * 4 * 1.5));
+      transform.moveBy(offsetX, offsetY, (long) (animationTime * 4));
 
       return true;
     }
