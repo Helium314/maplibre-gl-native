@@ -431,7 +431,7 @@ final class MapGestureDetector {
       double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
-      long animationTime = (long) ((velocityXY + 1500 / screenDensity) / 7 / tiltFactor);
+      long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor);
 //      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3);
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
@@ -456,13 +456,15 @@ final class MapGestureDetector {
       //  factor 4 with adjusted unitBezier is definietely too much... get rid of both 1.5 as a first try
       //   -> looks quite nice, but animation much too long
       //   use lower (new) base (1500 instead of 3500), this also should show whether my idea makes sense at all (i think not...)
+      //   -> does not work
+      //   now use half time, half distance
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
       cameraChangeDispatcher.onCameraMoveStarted(REASON_API_GESTURE);
 
       // update transformation
-      transform.moveBy(offsetX, offsetY, (long) (animationTime * 4));
+      transform.moveBy(offsetX / 2, offsetY / 2, (long) (animationTime * 2));
 
       return true;
     }
