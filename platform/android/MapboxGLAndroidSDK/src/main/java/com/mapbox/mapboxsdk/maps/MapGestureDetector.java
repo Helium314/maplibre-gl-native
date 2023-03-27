@@ -419,10 +419,14 @@ final class MapGestureDetector {
 
       // calculate velocity vector for xy dimensions, independent from screen size
       double velocityXY = Math.hypot(velocityX / screenDensity, velocityY / screenDensity);
-      if (velocityXY < MapboxConstants.VELOCITY_THRESHOLD_IGNORE_FLING / 10) {
+      if (velocityXY < MapboxConstants.VELOCITY_THRESHOLD_IGNORE_FLING / 5) {
         // ignore short flings, these can occur when other gestures just have finished executing
         return false;
       }
+      
+      // to have a smooth animation start, we need to adjust starting velocity by a factor determined
+      // by the first 2 unitBezier parameters used for moveBy in native_map_view.cpp
+      double factor = 0.46 / 0.25
 
       // tilt results in a bigger translation, limiting input for #5281
       double tilt = transform.getTilt();
@@ -431,13 +435,13 @@ final class MapGestureDetector {
 //      double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
-      long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor)*3;
+      long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor)*2;
 //      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3);
       
       // nah, try offset based on animation time and velocity (and that factor)
       // screenDensity and tilt come only via animationTime
-      double offsetX = velocityX * animationTime * 4 / 1000 / 10; // 1000 becuase speed is in pixels/s, 10 because ??
-      double offsetY = velocityY * animationTime * 4 / 1000 / 10; // 1000 becuase speed is in pixels/s, 10 because ??
+      double offsetX = velocityX * animationTime * factor / 1000 / 10; // 1000 becuase speed is in pixels/s, 10 because ??
+      double offsetY = velocityY * animationTime * factor / 1000 / 10; // 1000 becuase speed is in pixels/s, 10 because ??
       
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
@@ -470,7 +474,7 @@ final class MapGestureDetector {
       //   yes, see https://github.com/mapbox/mapbox-gestures-android/blob/18846f37b0b1384a3560103a1103ad31846f7366/library/src/main/java/com/mapbox/android/gestures/ProgressiveGesture.java#L82
       //    velocityTracker.computeCurrentVelocity(1000) means per 1000 ms (android.view.VelocityTracker)
       //    just assume it's the same for maplibre, as the code is actually mapbox
-      //    needed another factor 10, but seems fine now
+      //    needed another factor 10, but seems fine now (why does 10 really work well? it was just a guess...)
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
