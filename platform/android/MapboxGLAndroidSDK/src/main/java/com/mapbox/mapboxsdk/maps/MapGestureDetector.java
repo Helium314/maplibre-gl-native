@@ -419,7 +419,7 @@ final class MapGestureDetector {
 
       // calculate velocity vector for xy dimensions, independent from screen size
       double velocityXY = Math.hypot(velocityX / screenDensity, velocityY / screenDensity);
-      if (velocityXY < MapboxConstants.VELOCITY_THRESHOLD_IGNORE_FLING / 5) {
+      if (velocityXY < MapboxConstants.VELOCITY_THRESHOLD_IGNORE_FLING / 4) {
         // ignore short flings, these can occur when other gestures just have finished executing
         return false;
       }
@@ -436,7 +436,8 @@ final class MapGestureDetector {
 //      double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
-      long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor)*2;
+//      long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor)*2;
+      long animationTime = (long) (velocityXY / 5 + 400); // test whether a completely different time works well too (it should!)
 //      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE * 3);
       
       // nah, try offset based on animation time and velocity (and that factor)
