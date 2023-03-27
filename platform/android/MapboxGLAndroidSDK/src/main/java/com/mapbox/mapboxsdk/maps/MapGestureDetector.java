@@ -426,7 +426,7 @@ final class MapGestureDetector {
       
       // to have a smooth animation start, we need to adjust starting velocity by a factor determined
       // by the first 2 unitBezier parameters used for moveBy in native_map_view.cpp
-      double factor = 0.46 / 0.25
+      double factor = 0.46 / 0.25;
 
       // tilt results in a bigger translation, limiting input for #5281
       double tilt = transform.getTilt();
