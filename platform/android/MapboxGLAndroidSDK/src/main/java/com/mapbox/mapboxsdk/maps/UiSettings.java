@@ -82,6 +82,11 @@ public final class UiSettings {
   private float zoomRate = 1.0f;
 
   private boolean deselectMarkersOnTap = true;
+  
+  private long animationTime = 1;
+  private boolean newOffset = false;
+  private float factor = 4.0f;
+  private long flingThreshold = 1000;
 
   @Nullable
   private PointF userProvidedFocalPoint;
@@ -314,6 +319,38 @@ public final class UiSettings {
       savedInstanceState.getInt(MapboxConstants.STATE_ATTRIBUTION_MARGIN_TOP),
       savedInstanceState.getInt(MapboxConstants.STATE_ATTRIBUTION_MARGIN_RIGHT),
       savedInstanceState.getInt(MapboxConstants.STATE_ATTRIBUTION_MARGIN_BOTTOM));
+  }
+  
+  public long getAnimationTime() {
+    return animationTime;
+  }
+
+  public long getFlingThreshold() {
+    return flingThreshold;
+  }
+
+  public boolean getNewOffset() {
+    return newOffset;
+  }
+
+  public float getFactor() {
+    return factor;
+  }
+
+  public void setAnimationTime(long t) {
+    animationTime = t;
+  }
+
+  public void setFlingThreshold(long t) {
+    flingThreshold = t;
+  }
+
+  public void setNewOffset(boolean o) {
+    newOffset = o;
+  }
+
+  public void setFactor(float f) {
+    factor = f;
   }
 
   /**
