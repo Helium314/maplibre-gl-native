@@ -443,7 +443,7 @@ final class MapGestureDetector {
       if (uiSettings.getAnimationTime() == 3)
           animationTime = (long) (velocityXY / 5 + 400); // test whether a completely different time works well too (it should!)
       if (uiSettings.getAnimationTime() == 4)
-          (long) (velocityXY / 7 / tiltFactor + 500); // original but longer base
+          animationTime = (long) (velocityXY / 7 / tiltFactor + 500); // original but longer base
       if (uiSettings.getAnimationTime() > 4)
           animationTime = uiSettings.getAnimationTime();
       
