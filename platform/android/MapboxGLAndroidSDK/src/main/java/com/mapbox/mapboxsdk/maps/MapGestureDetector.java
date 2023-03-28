@@ -447,7 +447,7 @@ final class MapGestureDetector {
       
       // nah, try offset based on animation time and velocity (and that factor)
       // screenDensity and tilt come only via animationTime
-      if (uiSettings.getNewOffset() {
+      if (uiSettings.getNewOffset()) {
           offsetX = velocityX * animationTime * factor / 1000 / 10; // 1000 because speed is in pixels/s, 10 because ??
           offsetY = velocityY * animationTime * factor / 1000 / 10; // 1000 because speed is in pixels/s, 10 because ??
       }
