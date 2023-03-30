@@ -433,7 +433,7 @@ final class MapGestureDetector {
 
       // calculate animation time based on displacement
       long animationTime = (long) (velocityXY / 7 / tiltFactor + uiSettings.getFlingAnimationBaseTime());
-      if (uiSettings.getAnimationTime() > 10000) // crappy thing for switching in tests
+      if (uiSettings.getFlingAnimationBaseTime() > 10000) // crappy thing for switching in tests
           animationTime = (long) ((velocityXY + 7 * uiSettings.getFlingAnimationBaseTime() / 100 / screenDensity) / 7 / tiltFactor) * 2;
       
       double factor = uiSettings.getFactor();
