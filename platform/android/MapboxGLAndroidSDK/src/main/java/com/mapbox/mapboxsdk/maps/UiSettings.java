@@ -320,7 +320,7 @@ public final class UiSettings {
       savedInstanceState.getInt(MapboxConstants.STATE_ATTRIBUTION_MARGIN_BOTTOM));
   }
   
-  public long flingAnimationBaseTime() {
+  public long getFlingAnimationBaseTime() {
     return flingAnimationBaseTime;
   }
 
@@ -332,7 +332,7 @@ public final class UiSettings {
     return factor;
   }
 
-  public void flingAnimationBaseTime(long t) {
+  public void setFlingAnimationBaseTime(long t) {
     flingAnimationBaseTime = t;
   }
 
