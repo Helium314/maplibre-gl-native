@@ -416,7 +416,6 @@ final class MapGestureDetector {
       }
 
       float screenDensity = uiSettings.getPixelRatio();
-      screenDensity = (uiSettings.getFlingAnimationBaseTime() % 100) * 0.1f; // for fake-testing different screen density, though it might not be correct if it comes into play later during the native animation
 
       // calculate velocity vector for xy dimensions, independent from screen size
       double velocityXY = Math.hypot(velocityX / screenDensity, velocityY / screenDensity);
@@ -428,22 +427,16 @@ final class MapGestureDetector {
       // tilt results in a bigger translation, limiting input for #5281
       double tilt = transform.getTilt();
       double tiltFactor = 1.5 + ((tilt != 0) ? (tilt / 10) : 0);
-      double offsetX = velocityX / tiltFactor / screenDensity;
-      double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
       long animationTime = (long) (velocityXY / 7 / tiltFactor + uiSettings.getFlingAnimationBaseTime());
-      if (uiSettings.getFlingAnimationBaseTime() > 10000) // crappy thing for switching in tests
-          animationTime = (long) ((velocityXY + 7 * uiSettings.getFlingAnimationBaseTime() / 100 / screenDensity) / 7 / tiltFactor) * 2;
       
-      double factor = uiSettings.getFactor();
-      // new offset (currently just overwrite old one)
-      // screenDensity and tilt come in here via animationTime, but should they?
-      //  and if so, should the base animation time also be modified?
-      // 1000 because speed is in pixels/s
-      // and the factor?
-      offsetX = velocityX * animationTime * factor / 1000;
-      offsetY = velocityY * animationTime * factor / 1000;
+      // screenDensity and influcentcetilt come in here via animationTime
+      // factor 1000 because speed is in pixels/s
+      // and the factor 0.28 was determined by testing: panning the map and releasing should result in fling
+      //  animation starting at same speed as the move before (not properly tested for different screen density and tilt)
+      double offsetX = velocityX * animationTime * 0.28 / 1000;
+      double offsetY = velocityY * animationTime * 0.28 / 1000;
       
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
