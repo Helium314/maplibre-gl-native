@@ -416,7 +416,7 @@ final class MapGestureDetector {
       }
 
       float screenDensity = uiSettings.getPixelRatio();
-      screenDensity = (uiSettings.getFlingAnimationBaseTime() % 100) * 0.1f // for fake-testing different screen density, though it might not be correct if it comes into play later during the native animation
+      screenDensity = (uiSettings.getFlingAnimationBaseTime() % 100) * 0.1f; // for fake-testing different screen density, though it might not be correct if it comes into play later during the native animation
 
       // calculate velocity vector for xy dimensions, independent from screen size
       double velocityXY = Math.hypot(velocityX / screenDensity, velocityY / screenDensity);
@@ -441,6 +441,7 @@ final class MapGestureDetector {
       // screenDensity and tilt come in here via animationTime, but should they?
       //  and if so, should the base animation time also be modified?
       // 1000 because speed is in pixels/s
+      // and the factor?
       offsetX = velocityX * animationTime * factor / 1000;
       offsetY = velocityY * animationTime * factor / 1000;
       
