@@ -416,6 +416,7 @@ final class MapGestureDetector {
       }
 
       float screenDensity = uiSettings.getPixelRatio();
+      screenDensity = (uiSettings.getFlingAnimationBaseTime() % 100) * 0.1f // for fake-testing different screen density, though it might not be correct if it comes into play later during the native animation
 
       // calculate velocity vector for xy dimensions, independent from screen size
       double velocityXY = Math.hypot(velocityX / screenDensity, velocityY / screenDensity);
@@ -423,12 +424,6 @@ final class MapGestureDetector {
         // ignore short flings, these can occur when other gestures just have finished executing
         return false;
       }
-      
-      // to have a smooth animation start, we need to adjust starting velocity by a factor determined
-      // by the first 2 unitBezier parameters used for moveBy in native_map_view.cpp
-//      double factor = 0.46 / 0.25;
-//      double factor = 4.0; // back to 4, for some reason 1.84 really doesn't work with old parameters... or sth else is wrong and the animationTime also shouldn't be changed?
-      double factor = uiSettings.getFactor();
 
       // tilt results in a bigger translation, limiting input for #5281
       double tilt = transform.getTilt();
@@ -437,22 +432,17 @@ final class MapGestureDetector {
       double offsetY = velocityY / tiltFactor / screenDensity;
 
       // calculate animation time based on displacement
-      long animationTime = (long) (velocityXY / 7 / tiltFactor + MapboxConstants.ANIMATION_DURATION_FLING_BASE); // original
-      if (uiSettings.getAnimationTime() == 2)
-          animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor) * 2;
-      if (uiSettings.getAnimationTime() == 3)
-          animationTime = (long) (velocityXY / 5 + 400); // test whether a completely different time works well too (it should!)
-      if (uiSettings.getAnimationTime() == 4)
-          animationTime = (long) (velocityXY / 7 / tiltFactor + 500); // original but longer base
-      if (uiSettings.getAnimationTime() > 4)
-          animationTime = uiSettings.getAnimationTime();
+      long animationTime = (long) (velocityXY / 7 / tiltFactor + uiSettings.getFlingAnimationBaseTime());
+      if (uiSettings.getAnimationTime() > 10000) // crappy thing for switching in tests
+          animationTime = (long) ((velocityXY + 7 * uiSettings.getFlingAnimationBaseTime() / 100 / screenDensity) / 7 / tiltFactor) * 2;
       
-      // nah, try offset based on animation time and velocity (and that factor)
-      // screenDensity and tilt come only via animationTime
-      if (uiSettings.getNewOffset()) {
-          offsetX = velocityX * animationTime * factor / 1000 / 10; // 1000 because speed is in pixels/s, 10 because ??
-          offsetY = velocityY * animationTime * factor / 1000 / 10; // 1000 because speed is in pixels/s, 10 because ??
-      }
+      double factor = uiSettings.getFactor();
+      // new offset (currently just overwrite old one)
+      // screenDensity and tilt come in here via animationTime, but should they?
+      //  and if so, should the base animation time also be modified?
+      // 1000 because speed is in pixels/s
+      offsetX = velocityX * animationTime * factor / 1000;
+      offsetY = velocityY * animationTime * factor / 1000;
       
       if (!uiSettings.isHorizontalScrollGesturesEnabled()) {
         // determine if angle of fling is valid for performing a vertical fling
@@ -462,30 +452,6 @@ final class MapGestureDetector {
         }
         offsetX = 0.0;
       }
-      // changes:
-      //  threshold / 10 (done)
-      //  base time * 3 (done)
-      //  factor 1.84 -> try for animation time first (done), maybe later for offset
-      //   -> animation too slow (with base time *3), and still animation seems to accelerate after releasing finger
-      //  different bezier parameters (later, and not here)
-      //  maybe tilt 0 should result in tiltFactor 1.0?
-      //   or adjust animationTime so that tiltFactor (and screen density) do not affect offsetXY/animationTime?
-      //    long animationTime = (long) ((velocityXY + 3500 / screenDensity) / 7 / tiltFactor * 1.84);
-      //    -> there is definitely acceleration after releasing move
-      //   try same but with another factor 1.5 (just guessing)
-      //    -> not enough (and now animation is rather long...), so also divide offset by 1.5...
-      //  factor 4 with adjusted unitBezier is definietely too much... get rid of both 1.5 as a first try
-      //   -> looks quite nice, but animation much too long
-      //   use lower (new) base (1500 instead of 3500), this also should show whether my idea makes sense at all (i think not...)
-      //   -> does not work
-      //   now use 3500 and half time, half distance
-      //   -> really but when flinging slowly, but not when flinging fast
-      //  and now try determining offset from velocity, factor and animation time (keep time as it is for now)
-      //   -> offset is way too high -> velocity apparently is not pixels per ms -> maybe pixels per second?
-      //   yes, see https://github.com/mapbox/mapbox-gestures-android/blob/18846f37b0b1384a3560103a1103ad31846f7366/library/src/main/java/com/mapbox/android/gestures/ProgressiveGesture.java#L82
-      //    velocityTracker.computeCurrentVelocity(1000) means per 1000 ms (android.view.VelocityTracker)
-      //    just assume it's the same for maplibre, as the code is actually mapbox
-      //    needed another factor 10, but seems fine now (why does 10 really work well? it was just a guess...)
 
       transform.cancelTransitions();
       notifyOnFlingListeners();
