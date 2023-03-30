@@ -85,7 +85,6 @@ public final class UiSettings {
   
   private long flingAnimationBaseTime = MapboxConstants.ANIMATION_DURATION_FLING_BASE;
   private long flingThreshold = MapboxConstants.VELOCITY_THRESHOLD_IGNORE_FLING;
-  private float factor = 0.28f;
 
   @Nullable
   private PointF userProvidedFocalPoint;
@@ -328,20 +327,12 @@ public final class UiSettings {
     return flingThreshold;
   }
 
-  public float getFactor() {
-    return factor;
-  }
-
   public void setFlingAnimationBaseTime(long t) {
     flingAnimationBaseTime = t;
   }
 
   public void setFlingThreshold(long t) {
     flingThreshold = t;
-  }
-
-  public void setFactor(float f) {
-    factor = f;
   }
 
   /**
